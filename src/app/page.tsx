@@ -13,9 +13,10 @@ import {
   createPriceLabeler,
 } from "@/lib/price-calculator";
 import { formatPrice, formatPriceWon, formatShortDate } from "@/lib/utils";
-import type { City, PriceData, Duration } from "@/types";
+import type { City, Continent, PriceData, Duration } from "@/types";
 import { DEFAULT_DURATION } from "@/types";
 import { Logo } from "@/components/ui/Logo";
+import { CONTINENTS } from "@/data/cities";
 
 export default function HomePage() {
   const [cities, setCities] = useState<City[]>([]);
@@ -25,6 +26,7 @@ export default function HomePage() {
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showPricingInfo, setShowPricingInfo] = useState(false);
 
   useEffect(() => {
     fetch("/api/cities")
@@ -91,7 +93,8 @@ export default function HomePage() {
   return (
     <main className="min-h-screen bg-gray-50">
       <div className="max-w-lg mx-auto px-4 py-8">
-        <header className="text-center mb-8">
+        {/* Header */}
+        <header className="text-center mb-5">
           <div className="flex items-center justify-center gap-2">
             <Logo size={30} />
             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
@@ -99,22 +102,47 @@ export default function HomePage() {
             </h1>
           </div>
           <p className="text-xs text-gray-400 mt-1.5">
-            출발일별 여행 비용을 한눈에 · 성인 2인 기준
+            출발일별 여행 비용을 한눈에
           </p>
         </header>
 
-        <section className="flex justify-center mb-6">
+        {/* Pricing info toggle */}
+        <section className="mb-5">
+          <button
+            onClick={() => setShowPricingInfo((v) => !v)}
+            className="w-full text-left text-[11px] text-gray-400 hover:text-gray-500 transition flex items-center gap-1"
+          >
+            <span>가격 산정 기준</span>
+            <span className={`transition-transform ${showPricingInfo ? "rotate-90" : ""}`}>›</span>
+          </button>
+          {showPricingInfo && (
+            <div className="card-panel rounded-xl p-3 mt-2 text-[11px] text-gray-500 leading-relaxed space-y-1">
+              <p>• 마이리얼트립 직항 기준 왕복 항공 최저가 (2인)</p>
+              <p>• 도심 4성급 숙소 1실 기준, 여정 박수에 따라 계산</p>
+              <p>• 위 합산 금액을 1인당 비용으로 산출</p>
+              <p className="text-gray-400 pt-1">
+                ※ 실시간 변동 가능하여, 마이리얼트립 이동 시 다른 가격이 표시될 수 있습니다
+              </p>
+            </div>
+          )}
+        </section>
+
+        {/* City Selector */}
+        <section className="mb-5">
           <CitySelector
+            continents={CONTINENTS}
             cities={cities}
             selected={selectedCity}
             onSelect={setSelectedCity}
           />
         </section>
 
+        {/* Duration Slider */}
         <section className="card-panel rounded-2xl p-4 mb-3">
           <DurationSlider value={duration} onChange={setDuration} />
         </section>
 
+        {/* Summary */}
         {stats.count > 0 && (
           <section className="card-panel rounded-2xl p-4 mb-3">
             <div className="flex items-start justify-between">
@@ -142,6 +170,7 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* Chart */}
         {!loading && tripCosts.length > 3 && (
           <section className="card-panel rounded-2xl p-4 mb-3">
             <div className="text-[10px] text-gray-400 mb-2">출발일별 1인당 예상 비용 추이</div>
@@ -153,6 +182,7 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* Loading */}
         {loading && (
           <div className="text-center py-20">
             <div className="inline-block w-8 h-8 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
@@ -160,6 +190,7 @@ export default function HomePage() {
           </div>
         )}
 
+        {/* Error */}
         {error && (
           <section className="card-panel rounded-2xl text-center py-12 px-6">
             <p className="text-sm text-red-500 font-medium">{error}</p>
@@ -167,6 +198,7 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* Empty */}
         {showEmptyState && (
           <section className="card-panel rounded-2xl text-center py-16 px-6">
             <p className="text-3xl mb-3">📡</p>
@@ -175,6 +207,7 @@ export default function HomePage() {
           </section>
         )}
 
+        {/* Calendar */}
         {!loading && !error && tripCosts.length > 0 && (
           <section className="card-panel rounded-2xl p-4">
             <div className="flex items-center justify-between mb-3">
@@ -190,6 +223,7 @@ export default function HomePage() {
         )}
       </div>
 
+      {/* Breakdown */}
       {selectedTrip && selectedCity && (
         <PriceBreakdown
           trip={selectedTrip}

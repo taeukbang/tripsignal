@@ -2,7 +2,7 @@
 
 import { useMemo, useState, useRef, useCallback } from "react";
 import type { TripCost } from "@/types";
-import { formatPrice } from "@/lib/utils";
+import { formatPrice, formatPriceWon, getDayOfWeek, addDays } from "@/lib/utils";
 
 interface PriceTrendChartProps {
   costs: TripCost[];
@@ -67,6 +67,19 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
 
   const hp = hoverIdx !== null ? chart.pts[hoverIdx] : null;
 
+  const formatTooltipDate = (cost: TripCost) => {
+    const d = new Date(cost.departureDate);
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    const dow = getDayOfWeek(cost.departureDate);
+    const retDate = addDays(cost.departureDate, cost.duration - 1);
+    const rd = new Date(retDate);
+    const rm = String(rd.getMonth() + 1).padStart(2, "0");
+    const rday = String(rd.getDate()).padStart(2, "0");
+    const rdow = getDayOfWeek(retDate);
+    return `${m}.${day} (${dow}) - ${rm}.${rday} (${rdow})`;
+  };
+
   return (
     <div className="relative">
       <svg
@@ -76,6 +89,10 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
         style={{ height: 160 }}
         onMouseMove={(e) => setHoverIdx(getIdxFromEvent(e.clientX))}
         onMouseLeave={() => setHoverIdx(null)}
+        onClick={(e) => {
+          const idx = getIdxFromEvent(e.clientX);
+          if (idx !== null) onSelectDate(costs[idx].departureDate);
+        }}
         onTouchMove={(e) => setHoverIdx(getIdxFromEvent(e.touches[0].clientX))}
         onTouchEnd={() => {
           if (hp) onSelectDate(hp.cost.departureDate);
@@ -89,10 +106,8 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
           </linearGradient>
         </defs>
 
-        {/* Area */}
         <polygon points={chart.area} fill="url(#areaGrad)" />
 
-        {/* Avg line */}
         <line
           x1={PAD.left} y1={chart.avgY}
           x2={SVG_W - PAD.right} y2={chart.avgY}
@@ -105,51 +120,36 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
           평균 {formatPrice(avgCost)}
         </text>
 
-        {/* Line */}
         <polyline
           points={chart.line}
           fill="none" stroke="#2563EB" strokeWidth="2"
           strokeLinecap="round" strokeLinejoin="round"
         />
 
-        {/* Min dot */}
         <circle
           cx={chart.pts[chart.minIdx].x} cy={chart.pts[chart.minIdx].y}
-          r="4" fill="#2563EB" stroke="#fff" strokeWidth="2"
+          r="4" fill="#EC4937" stroke="#fff" strokeWidth="2"
         />
         {hoverIdx === null && (
           <text
-            x={chart.pts[chart.minIdx].x} y={chart.pts[chart.minIdx].y - 10}
-            textAnchor="middle" fontSize="11" fontWeight="700" fill="#2563EB"
+            x={chart.pts[chart.minIdx].x} y={chart.pts[chart.minIdx].y + 14}
+            textAnchor="middle" fontSize="10" fontWeight="700" fill="#EC4937"
             fontFamily="Pretendard, sans-serif"
           >
-            최저 {formatPrice(chart.pts[chart.minIdx].cost.perPersonCost)}
+            최저가 {formatPriceWon(chart.pts[chart.minIdx].cost.perPersonCost)}
           </text>
         )}
 
-        {/* Hover */}
         {hp && (
           <>
             <line
               x1={hp.x} y1={PAD.top} x2={hp.x} y2={SVG_H - PAD.bottom}
-              stroke="#2563EB" strokeWidth="1" strokeDasharray="4,3" opacity="0.4"
+              stroke="#374151" strokeWidth="1" opacity="0.3"
             />
-            <circle cx={hp.x} cy={hp.y} r="5" fill="#2563EB" stroke="#fff" strokeWidth="2" />
-            <rect
-              x={hp.x - 48} y={hp.y - 30} width="96" height="22" rx="6"
-              fill="#1F2937" opacity="0.9"
-            />
-            <text
-              x={hp.x} y={hp.y - 15}
-              textAnchor="middle" fontSize="11" fontWeight="600" fill="#fff"
-              fontFamily="Pretendard, sans-serif"
-            >
-              {new Date(hp.cost.departureDate).getMonth() + 1}/{new Date(hp.cost.departureDate).getDate()} · {formatPrice(hp.cost.perPersonCost)}
-            </text>
+            <circle cx={hp.x} cy={hp.y} r="4" fill="#374151" stroke="#fff" strokeWidth="2" />
           </>
         )}
 
-        {/* Month labels */}
         {chart.months.map((m) => (
           <text
             key={m.label}
@@ -160,6 +160,28 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
           </text>
         ))}
       </svg>
+
+      {/* HTML tooltip overlay */}
+      {hp && (
+        <div
+          className="absolute pointer-events-none"
+          style={{
+            left: `${(hp.x / SVG_W) * 100}%`,
+            top: `${(hp.y / SVG_H) * 100}%`,
+            transform: "translate(-50%, -120%)",
+          }}
+        >
+          <div className="bg-white rounded-lg shadow-lg border border-gray-200 px-3 py-2 text-center whitespace-nowrap">
+            <div className="text-[11px] text-gray-500">
+              {formatTooltipDate(hp.cost)}
+            </div>
+            <div className="text-sm font-bold text-blue-600">
+              {formatPriceWon(hp.cost.perPersonCost)}~
+            </div>
+          </div>
+          <div className="w-2 h-2 bg-white border-r border-b border-gray-200 rotate-45 mx-auto -mt-1" />
+        </div>
+      )}
     </div>
   );
 }

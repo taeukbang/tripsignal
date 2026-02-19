@@ -1,3 +1,9 @@
+/** 대륙 정보 */
+export interface Continent {
+  id: string;
+  nameKo: string;
+}
+
 /** 도시 정보 */
 export interface City {
   id: string;
@@ -7,6 +13,7 @@ export interface City {
   airportNameKo: string;
   regionId: number;
   downtownPoiId: string;
+  continentId: string;
 }
 
 /** 총 여행 비용 (클라이언트 계산 결과) — 성인 2인 기준 */
