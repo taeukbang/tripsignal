@@ -1,0 +1,89 @@
+@import "tailwindcss";
+
+@keyframes slide-up {
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+}
+
+@keyframes pulse-signal {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.2); }
+  50% { box-shadow: 0 0 0 5px rgba(37, 99, 235, 0); }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.animate-pulse-signal {
+  animation: pulse-signal 3s ease-in-out infinite;
+}
+
+:root {
+  --mrt-blue: #2563EB;
+  --mrt-blue-light: #DBEAFE;
+  --mrt-green: #16A34A;
+
+  --price-lowest: #2563EB;
+  --price-cheap: #93C5FD;
+  --price-normal: #E5E7EB;
+  --price-expensive: #FED7AA;
+  --price-peak: #FECACA;
+  --price-nodata: #F9FAFB;
+
+  --background: #FFFFFF;
+  --foreground: #111827;
+}
+
+body {
+  color: var(--foreground);
+  background: #F9FAFB;
+  min-height: 100vh;
+  font-family:
+    "Pretendard Variable",
+    Pretendard,
+    -apple-system,
+    BlinkMacSystemFont,
+    system-ui,
+    Roboto,
+    "Helvetica Neue",
+    "Segoe UI",
+    "Apple SD Gothic Neo",
+    "Noto Sans KR",
+    "Malgun Gothic",
+    sans-serif;
+}
+
+.card-panel {
+  background: #FFFFFF;
+  border: 1px solid #F3F4F6;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+}
+
+.cell-lowest {
+  background: #DBEAFE;
+  box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
+}
+
+.cell-cheap {
+  background: #EFF6FF;
+}
+
+.cell-normal {
+  background: #FFFFFF;
+  border: 1px solid #F3F4F6;
+}
+
+.cell-expensive {
+  background: #FFF7ED;
+}
+
+.cell-peak {
+  background: #FEF2F2;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-slide-up,
+  .animate-pulse-signal {
+    animation: none;
+  }
+}
