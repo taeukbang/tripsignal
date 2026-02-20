@@ -43,6 +43,7 @@ export function requireEnv(name: string): string {
 }
 
 const AIRLINE_NAMES: Record<string, string> = {
+  // 한국 항공사
   KE: "대한항공",
   OZ: "아시아나항공",
   "7C": "제주항공",
@@ -51,19 +52,46 @@ const AIRLINE_NAMES: Record<string, string> = {
   BX: "에어부산",
   ZE: "이스타항공",
   RS: "에어서울",
-  SQ: "싱가포르항공",
-  TG: "타이항공",
+  // 일본
   NH: "전일본공수(ANA)",
   JL: "일본항공(JAL)",
-  CX: "캐세이퍼시픽",
-  AF: "에어프랑스",
-  VN: "베트남항공",
+  MM: "피치항공",
+  IJ: "스프링재팬",
+  // 동남아시아
+  SQ: "싱가포르항공",
+  TR: "스쿠트",
+  TG: "타이항공",
+  WE: "타이스마일",
   SL: "타이라이온에어",
   FD: "타이에어아시아",
+  VZ: "타이비엣젯",
+  VN: "베트남항공",
+  VJ: "비엣젯",
+  PR: "필리핀항공",
+  "5J": "세부퍼시픽",
+  GA: "가루다인도네시아",
+  ID: "바틱에어",
+  // 동아시아
+  CI: "중화항공",
+  BR: "에바항공",
+  IT: "타이거에어대만",
+  CX: "캐세이퍼시픽",
+  HX: "홍콩항공",
+  UO: "홍콩익스프레스",
+  // 유럽
+  AF: "에어프랑스",
+  BA: "브리티시항공",
+  AZ: "ITA항공",
+  // 미주
+  DL: "델타항공",
+  UA: "유나이티드항공",
+  AA: "아메리칸항공",
+  HA: "하와이안항공",
+  // 중동/아프리카
   QR: "카타르항공",
   EK: "에미레이트항공",
   EY: "에티하드항공",
-  MM: "피치항공",
+  ET: "에티오피아항공",
 };
 
 export function getAirlineName(code: string): string {

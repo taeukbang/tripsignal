@@ -103,7 +103,6 @@ export async function fetchHotelSearch(
 
   const params = new URLSearchParams({
     keyword,
-    regionId: String(regionId),
     checkIn,
     checkOut,
     adultCount: String(ADULTS_COUNT),
@@ -112,6 +111,9 @@ export async function fetchHotelSearch(
     mrtKeyName: "",
     selected: filters.join(","),
   });
+  if (regionId > 0) {
+    params.set("regionId", String(regionId));
+  }
 
   const url = `${MRT_BASE_URL}/unionstay/v2/front/search?${params}`;
   const res = await fetchWithRetry(url, {
