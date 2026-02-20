@@ -89,6 +89,7 @@ export default function HomePage() {
   const handleCloseBreakdown = useCallback(() => setSelectedDate(null), []);
 
   const showEmptyState = priceData === null && !loading && !error && cities.length > 0;
+  const isSparseData = !loading && !error && tripCosts.length > 0 && tripCosts.length < 60;
 
   return (
     <main className="min-h-screen bg-gray-50">
@@ -198,12 +199,24 @@ export default function HomePage() {
           </section>
         )}
 
-        {/* Empty */}
+        {/* Empty — no data at all */}
         {showEmptyState && (
           <section className="card-panel rounded-2xl text-center py-16 px-6">
             <p className="text-3xl mb-3">📡</p>
             <p className="text-sm font-medium text-gray-600">아직 수집된 가격 데이터가 없습니다</p>
             <p className="text-xs text-gray-400 mt-1.5">데이터 수집 스크립트를 실행해주세요</p>
+          </section>
+        )}
+
+        {/* Empty — data loaded but no trip costs for this duration */}
+        {!loading && !error && priceData && tripCosts.length === 0 && (
+          <section className="card-panel rounded-2xl text-center py-12 px-6">
+            <p className="text-sm font-medium text-gray-600">
+              이 도시의 {duration}일 여정 직항 데이터가 아직 없습니다
+            </p>
+            <p className="text-xs text-gray-400 mt-1.5">
+              다른 여정 길이를 시도하거나 다른 도시를 선택해보세요
+            </p>
           </section>
         )}
 
@@ -213,6 +226,11 @@ export default function HomePage() {
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] text-gray-400">1인당 예상 비용 · 실제 예약가와 다를 수 있음</span>
             </div>
+            {isSparseData && (
+              <div className="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 mb-3">
+                이 도시는 직항 데이터가 일부 날짜만 제공됩니다
+              </div>
+            )}
             <PriceCalendar
               costs={tripCosts}
               selectedDate={selectedDate}

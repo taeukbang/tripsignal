@@ -44,11 +44,13 @@ export function buildHotelUrl(city: City, checkIn: string, checkOut: string): st
     adultCount: String(ADULTS_COUNT),
     childCount: "0",
     childAges: "",
-    regionId: String(city.regionId),
     keyword: city.nameKo,
     roomCount: "1",
     isDomestic: "false",
     mrtKeyName: "",
   });
+  if (city.regionId > 0) {
+    params.set("regionId", String(city.regionId));
+  }
   return `https://accommodation.myrealtrip.com/union/products?${params.toString()}`;
 }
