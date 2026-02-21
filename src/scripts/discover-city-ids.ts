@@ -64,7 +64,7 @@ async function discoverCity(city: CityCandidate): Promise<DiscoveryResult> {
     childCount: "0",
     isDomestic: "false",
     mrtKeyName: "",
-    selected: "starRating:fourstar",
+    selected: "starRating:threestar",
   });
 
   const url = `${MRT_BASE_URL}/unionstay/v2/front/search?${params}`;
@@ -127,7 +127,7 @@ async function main() {
 
       const poi = result.selectedPoi;
       const poiInfo = poi ? `${poi.title} (${poi.value}) — ${poi.count}개` : "POI 없음";
-      console.log(`  [${city.keyword}] 4성급 ${result.totalHotels}개 | 도심: ${poiInfo}`);
+      console.log(`  [${city.keyword}] 3성급 ${result.totalHotels}개 | 도심: ${poiInfo}`);
     } catch (err) {
       console.error(`  [${city.keyword}] 실패:`, err instanceof Error ? err.message : err);
       results.push({
@@ -143,7 +143,7 @@ async function main() {
   }
 
   console.log("\n\n=== 탐색 결과 요약 ===\n");
-  console.log("| 도시 | 코드 | 4성급 | 도심 지역 | POI ID | 숙소수 | regionId |");
+  console.log("| 도시 | 코드 | 3성급 | 도심 지역 | POI ID | 숙소수 | regionId |");
   console.log("|------|------|-------|----------|--------|--------|----------|");
 
   for (const r of results) {

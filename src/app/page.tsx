@@ -99,7 +99,7 @@ export default function HomePage() {
           <div className="flex items-center justify-center gap-2">
             <Logo size={30} />
             <h1 className="text-2xl font-extrabold tracking-tight text-gray-900">
-              My <span className="text-blue-600">TripSignal</span>
+              My<span className="text-blue-600">TripSignal</span>
             </h1>
           </div>
           <p className="text-xs text-gray-400 mt-1.5">
@@ -119,7 +119,7 @@ export default function HomePage() {
           {showPricingInfo && (
             <div className="card-panel rounded-xl p-3 mt-2 text-[11px] text-gray-500 leading-relaxed space-y-1">
               <p>• 마이리얼트립 직항 기준 왕복 항공 최저가 (2인)</p>
-              <p>• 도심 4성급 숙소 1실 기준, 여정 박수에 따라 계산</p>
+              <p>• 도심 3성급 숙소 1실 기준, 여정 박수에 따라 계산</p>
               <p>• 위 합산 금액을 1인당 비용으로 산출</p>
               <p className="text-gray-400 pt-1">
                 ※ 실시간 변동 가능하여, 마이리얼트립 이동 시 다른 가격이 표시될 수 있습니다
