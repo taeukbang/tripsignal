@@ -68,9 +68,9 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
               <div>
                 <div className="text-sm font-semibold text-gray-900">숙소 {nights}박 (1실)</div>
                 <div className="text-[11px] text-gray-500 max-w-[180px] truncate">
-                  {trip.hotelName ?? "4성급 최저가"}
+                  {trip.hotelName ?? "3성급 최저가"}
                 </div>
-                <div className="text-[11px] text-gray-400">{formatPriceWon(trip.hotelPricePerNight)}/박 · 4성급</div>
+                <div className="text-[11px] text-gray-400">{formatPriceWon(trip.hotelPricePerNight)}/박 · 3성급</div>
               </div>
             </div>
             <span className="text-sm font-bold text-gray-900 pt-0.5">{formatPriceWon(hotelTotal)}</span>

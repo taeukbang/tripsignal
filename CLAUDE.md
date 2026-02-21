@@ -1,6 +1,6 @@
-# CLAUDE.md — My TripSignal
+# CLAUDE.md — MyTripSignal
 
-향후 3~6개월간 출발일별 총 여행 비용(직항 왕복 항공 + 도심 4성급 숙소)을 캘린더 히트맵과 꺾은선 그래프로 보여주고, 3~7일 여정 길이를 조절하며 최적 출발일을 탐색할 수 있는 서비스. **성인 2인 기준, 1인당 비용**으로 표시.
+향후 3~6개월간 출발일별 총 여행 비용(직항 왕복 항공 + 도심 3성급 숙소)을 캘린더 히트맵과 꺾은선 그래프로 보여주고, 3~7일 여정 길이를 조절하며 최적 출발일을 탐색할 수 있는 서비스. **성인 2인 기준, 1인당 비용**으로 표시.
 
 ---
 
@@ -60,12 +60,12 @@
 |------|-----|
 | 메서드 | GET `api3.myrealtrip.com/unionstay/v2/front/search` |
 | 인증 | 불필요 (Origin 헤더 필요: `https://accommodation.myrealtrip.com`) |
-| 핵심 파라미터 | `keyword` (도시 한글명), `regionId`, `checkIn`, `checkOut`, `adultCount=2`, `isDomestic=false`, `selected=starRating:fourstar,stayPoi:{downtownPoiId}` |
+| 핵심 파라미터 | `keyword` (도시 한글명), `regionId`, `checkIn`, `checkOut`, `adultCount=2`, `isDomestic=false`, `selected=starRating:threestar,stayPoi:{downtownPoiId}` |
 | 응답 위치 | `data.dynamicArea.sections[].loggingMeta.BIZLOG.data` |
 | 가격 필드 | `item_price` (세금포함 1박가, 원), `item_name` (호텔명), `item_grade` (성급) |
 | 특성 | 1회 호출로 ~20개 호텔 반환. 4박 검색 기준으로 수집, `item_price`는 이미 1박 가격 (나누기 불필요) |
 
-**주의:** 구 API `search/map/v2/search`는 데이터를 반환하지 않음. 반드시 `/unionstay/v2/front/search` 사용. `selected` 파라미터로 4성급 + 도심 지역 필터 동시 적용.
+**주의:** 구 API `search/map/v2/search`는 데이터를 반환하지 않음. 반드시 `/unionstay/v2/front/search` 사용. `selected` 파라미터로 3성급 + 도심 지역 필터 동시 적용.
 
 ---
 
@@ -233,13 +233,13 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 
 ```
 항공 2인 = 1인 왕복 최저가 × 2
-숙소 N박 = 도심 4성급 최저가/박 × (여정일수 - 1)
+숙소 N박 = 도심 3성급 최저가/박 × (여정일수 - 1)
 2인 합계 = 항공 2인 + 숙소 N박
 1인당 = 2인 합계 / 2
 ```
 
 - 항공: `/calendar/window` API → 여정별(3~7일) 1인 왕복 직항 최저가. 슬라이더 변경 시 해당 duration의 항공가로 전환 (API 재호출 없음, 클라이언트에 전 duration 데이터 보유)
-- 숙소: `/unionstay/v2/front/search` → 도심 4성급 최저가/박. 4박 기준 검색, `item_price` 그대로 사용
+- 숙소: `/unionstay/v2/front/search` → 도심 3성급 최저가/박. 4박 기준 검색, `item_price` 그대로 사용
 - 캘린더/그래프에 **1인당** 비용 표시
 - 여정 길이 변경 시 숙소 N박만 재계산 (API 재호출 없음)
 
@@ -257,7 +257,7 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 
 날짜 셀 탭 시 표시. **항공사명(IATA 코드) + 호텔명** 출처 명시:
 - "에어부산 (BX) · 직항" — 1인 364,100원, 2인 728,200원
-- "신주쿠 워싱턴 호텔 · 4성급" — 128,127원/박 × 4박
+- "신주쿠 워싱턴 호텔 · 3성급" — 128,127원/박 × 4박
 - 합계 (2인) / **1인당** (강조)
 - "항공권 보기" → `flights.myrealtrip.com` (KSESID 필수: `air:b2c:SELK138RB:SELK138RB::00`)
 - "숙소 보기" → `accommodation.myrealtrip.com` (딥링크 정상 동작)
@@ -284,7 +284,7 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 - 로고 컴포넌트: `src/components/ui/Logo.tsx`
 
 ### 화면 구성 (위→아래)
-1. 헤더: Valley Pin 로고 + "My TripSignal" (블루 액센트)
+1. 헤더: Valley Pin 로고 + "MyTripSignal" (블루 액센트)
 2. 도시 선택: 다크 필 버튼 (활성) + 화이트 아웃라인 (비활성)
 3. 여정 슬라이더: 3~7일, 기본 5일
 4. 요약 카드: 1인당 최저가 (블루) + 평균 + 절약액
@@ -342,7 +342,7 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 | 기간 | 향후 3~6개월 |
 | 여정 | 3~7일 (슬라이더) |
 | 항공 | 직항 왕복 최저가 (1인가) |
-| 숙소 | 도심 4성급 호텔 최저가 (세금포함 1박가) |
+| 숙소 | 도심 3성급 호텔 최저가 (세금포함 1박가) |
 | 표시 | 성인 2인 기준, 1인당 비용 |
 | 데이터 수집 | GitHub Actions 매일 KST 09:00 |
 

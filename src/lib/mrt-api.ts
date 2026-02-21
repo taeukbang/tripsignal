@@ -77,7 +77,7 @@ export async function fetchFlightWindow(
   }));
 }
 
-// ── Hotel: /unionstay/v2/front/search (도심 4성급 최저가) ──
+// ── Hotel: /unionstay/v2/front/search (도심 3성급 최저가) ──
 
 interface UnionStayBizlogData {
   item_id: number;
@@ -96,7 +96,7 @@ export async function fetchHotelSearch(
   checkOut: string,
   downtownPoiId?: string,
 ): Promise<MrtHotelItem[]> {
-  const filters = ["starRating:fourstar"];
+  const filters = ["starRating:threestar"];
   if (downtownPoiId) {
     filters.push(`stayPoi:${downtownPoiId}`);
   }
