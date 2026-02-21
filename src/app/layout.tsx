@@ -22,7 +22,7 @@ export const metadata: Metadata = {
     "항공권 최저가",
     "숙소 최저가",
     "여행 캘린더",
-    "My TripSignal",
+    "MyTripSignal",
   ],
   icons: {
     icon: "/favicon.svg",
@@ -36,12 +36,12 @@ export const metadata: Metadata = {
       "3~6개월 캘린더 히트맵으로 최적의 여행 출발일을 찾아보세요. 항공 + 숙소 합산 1인당 비용을 한눈에.",
     type: "website",
     url: SITE_URL,
-    siteName: "My TripSignal",
+    siteName: "MyTripSignal",
     locale: "ko_KR",
   },
   twitter: {
     card: "summary",
-    title: "My TripSignal — 출발일별 총 여행 비용을 한눈에",
+    title: "MyTripSignal — 출발일별 총 여행 비용을 한눈에",
     description: "캘린더 히트맵으로 최적의 여행 출발일을 찾아보세요.",
   },
   appleWebApp: {

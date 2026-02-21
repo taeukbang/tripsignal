@@ -1,5 +1,5 @@
 {
-  "name": "My TripSignal",
+  "name": "MyTripSignal",
   "short_name": "TripSignal",
   "description": "출발일별 총 여행 비용을 한눈에",
   "start_url": "/",

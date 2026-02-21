@@ -30,7 +30,7 @@ export function ShareButton({ city, duration, selectedDate }: ShareButtonProps) 
 
     if (navigator.share) {
       try {
-        await navigator.share({ title: "My TripSignal", text: shareText, url });
+        await navigator.share({ title: "MyTripSignal", text: shareText, url });
         analytics.shareClick("native_share", city.id);
       } catch {
         /* user cancelled */
