@@ -11,8 +11,8 @@ interface PriceTrendChartProps {
 }
 
 const SVG_W = 480;
-const SVG_H = 160;
-const PAD = { top: 24, right: 16, bottom: 32, left: 16 };
+const SVG_H = 200;
+const PAD = { top: 24, right: 16, bottom: 36, left: 16 };
 
 export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChartProps) {
   const [hoverIdx, setHoverIdx] = useState<number | null>(null);
@@ -49,7 +49,10 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
       }
     });
 
-    return { pts, avgY, minIdx, line, area, months };
+    const minLabelY = pts[minIdx].y;
+    const avgLabelOverlap = Math.abs(minLabelY + 14 - (avgY - 6)) < 16;
+
+    return { pts, avgY, minIdx, line, area, months, avgLabelOverlap };
   }, [costs, avgCost]);
 
   const getIdxFromEvent = useCallback(
@@ -80,13 +83,17 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
     return `${m}.${day} (${dow}) - ${rm}.${rday} (${rdow})`;
   };
 
+  const avgLabelY = chart.avgLabelOverlap ? chart.avgY + 14 : chart.avgY - 6;
+
   return (
     <div className="relative">
       <svg
         ref={svgRef}
         viewBox={`0 0 ${SVG_W} ${SVG_H}`}
         className="w-full"
-        style={{ height: 160 }}
+        style={{ height: 200 }}
+        role="img"
+        aria-label="출발일별 1인당 예상 비용 추이 그래프"
         onMouseMove={(e) => setHoverIdx(getIdxFromEvent(e.clientX))}
         onMouseLeave={() => setHoverIdx(null)}
         onClick={(e) => {
@@ -114,7 +121,7 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
           stroke="#D1D5DB" strokeWidth="1" strokeDasharray="6,4"
         />
         <text
-          x={SVG_W - PAD.right} y={chart.avgY - 6}
+          x={SVG_W - PAD.right} y={avgLabelY}
           textAnchor="end" fontSize="11" fill="#9CA3AF" fontFamily="Pretendard, sans-serif"
         >
           평균 {formatPrice(avgCost)}
@@ -132,11 +139,11 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
         />
         {hoverIdx === null && (
           <text
-            x={chart.pts[chart.minIdx].x} y={chart.pts[chart.minIdx].y + 14}
+            x={chart.pts[chart.minIdx].x} y={chart.pts[chart.minIdx].y - 8}
             textAnchor="middle" fontSize="10" fontWeight="700" fill="#EC4937"
             fontFamily="Pretendard, sans-serif"
           >
-            최저가 {formatPriceWon(chart.pts[chart.minIdx].cost.perPersonCost)}
+            최저 {formatPriceWon(chart.pts[chart.minIdx].cost.perPersonCost)}
           </text>
         )}
 
@@ -153,7 +160,7 @@ export function PriceTrendChart({ costs, avgCost, onSelectDate }: PriceTrendChar
         {chart.months.map((m) => (
           <text
             key={m.label}
-            x={m.x} y={SVG_H - 10}
+            x={m.x} y={SVG_H - 12}
             fontSize="11" fill="#9CA3AF" fontFamily="Pretendard, sans-serif"
           >
             {m.label}

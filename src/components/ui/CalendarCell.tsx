@@ -12,6 +12,7 @@ interface CalendarCellProps {
   isLowest: boolean;
   isSelected: boolean;
   isToday: boolean;
+  isPast: boolean;
   onClick: (date: string) => void;
 }
 
@@ -39,12 +40,18 @@ export const CalendarCell = memo(function CalendarCell({
   isLowest,
   isSelected,
   isToday,
+  isPast,
   onClick,
 }: CalendarCellProps) {
   if (!trip) {
     return (
-      <div className="relative min-h-[58px] rounded-lg flex flex-col items-center justify-center bg-gray-50">
-        <span className="text-[10px] text-gray-300">{dayOfMonth}</span>
+      <div className="relative min-h-[58px] rounded-lg flex flex-col items-center justify-center bg-gray-50/70">
+        <span className={`text-[10px] ${isPast ? "text-gray-200" : "text-gray-300"}`}>
+          {dayOfMonth}
+        </span>
+        {!isPast && (
+          <span className="text-[8px] text-gray-300 mt-0.5">—</span>
+        )}
       </div>
     );
   }
@@ -52,6 +59,7 @@ export const CalendarCell = memo(function CalendarCell({
   return (
     <button
       onClick={() => onClick(date)}
+      aria-label={`${date} 출발, 1인당 ${formatPrice(trip.perPersonCost)}`}
       className={`
         relative min-h-[58px] rounded-lg transition-all duration-150
         flex flex-col items-center justify-center gap-0.5

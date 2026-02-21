@@ -1,0 +1,406 @@
+{
+  "firstImpression": {
+    "h1": "MyTripSignal",
+    "subtitle": "내 여행의 시세를 확인하세요",
+    "visibleElements": [
+      "city selector",
+      "slider",
+      "chart",
+      "calendar"
+    ],
+    "bodyLength": 6705
+  },
+  "performance": {
+    "initialLoadMs": 3122,
+    "contentLoadMs": 6132,
+    "switchTimings": [
+      {
+        "city": "파리",
+        "ms": 31
+      },
+      {
+        "city": "방콕",
+        "ms": 22
+      },
+      {
+        "city": "도쿄",
+        "ms": 40
+      }
+    ]
+  },
+  "coverage": [
+    {
+      "city": "도쿄",
+      "id": "tokyo",
+      "cells": 8,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "41만",
+      "avgPrice": "57만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "오사카",
+      "id": "osaka",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "34만",
+      "avgPrice": "48만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "후쿠오카",
+      "id": "fukuoka",
+      "cells": 8,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "38만",
+      "avgPrice": "51만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "삿포로",
+      "id": "sapporo",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "37만",
+      "avgPrice": "61만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "타이베이",
+      "id": "taipei",
+      "cells": 4,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "35만",
+      "avgPrice": "47만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "홍콩",
+      "id": "hongkong",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "37만",
+      "avgPrice": "49만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "방콕",
+      "id": "bangkok",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "30만",
+      "avgPrice": "43만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "다낭",
+      "id": "danang",
+      "cells": 8,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "28만",
+      "avgPrice": "44만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "호치민",
+      "id": "hochiminh",
+      "cells": 4,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "25만",
+      "avgPrice": "41만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "하노이",
+      "id": "hanoi",
+      "cells": 5,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "23만",
+      "avgPrice": "34만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "싱가포르",
+      "id": "singapore",
+      "cells": 6,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "56만",
+      "avgPrice": "80만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "세부",
+      "id": "cebu",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "29만",
+      "avgPrice": "40만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "발리",
+      "id": "bali",
+      "cells": 6,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "63만",
+      "avgPrice": "89만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "나트랑",
+      "id": "nhatrang",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "27만",
+      "avgPrice": "47만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "파리",
+      "id": "paris",
+      "cells": 6,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "123만",
+      "avgPrice": "229만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "런던",
+      "id": "london",
+      "cells": 7,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "114만",
+      "avgPrice": "176만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "로마",
+      "id": "rome",
+      "cells": 2,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "106만",
+      "avgPrice": "193만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "괌",
+      "id": "guam",
+      "cells": 9,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "39만",
+      "avgPrice": "55만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "호놀룰루",
+      "id": "honolulu",
+      "cells": 5,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "95만",
+      "avgPrice": "142만",
+      "quality": "SPARSE"
+    },
+    {
+      "city": "뉴욕",
+      "id": "newyork",
+      "cells": 1,
+      "months": 7,
+      "hasChart": true,
+      "minPrice": "148만",
+      "avgPrice": "253만",
+      "quality": "SPARSE"
+    }
+  ],
+  "priceCheck": [
+    {
+      "city": "도쿄",
+      "displayMin": "41만",
+      "displayAvg": "57만",
+      "minDate": "5/11 (월) 출발",
+      "calendarMin": 730000,
+      "calendarMax": 920000,
+      "range": "73만 ~ 92만",
+      "samplePrices": [
+        "79만",
+        "85만",
+        "92만",
+        "92만",
+        "81만",
+        "85만",
+        "79만",
+        "73만"
+      ]
+    },
+    {
+      "city": "파리",
+      "displayMin": "123만",
+      "displayAvg": "229만",
+      "minDate": "2/23 (월) 출발",
+      "calendarMin": 1230000,
+      "calendarMax": 1510000,
+      "range": "123만 ~ 151만",
+      "samplePrices": [
+        "137만",
+        "123만",
+        "149만",
+        "146만",
+        "143만",
+        "151만"
+      ]
+    },
+    {
+      "city": "방콕",
+      "displayMin": "30만",
+      "displayAvg": "43만",
+      "minDate": "3/21 (토) 출발",
+      "calendarMin": 410000,
+      "calendarMax": 720000,
+      "range": "41만 ~ 72만",
+      "samplePrices": [
+        "72만",
+        "71만",
+        "65만",
+        "62만",
+        "67만",
+        "66만",
+        "63만",
+        "49만",
+        "41만"
+      ]
+    }
+  ],
+  "ux": {
+    "consoleErrors": 0,
+    "loadingState": {
+      "spinner": false,
+      "loadingText": false
+    },
+    "layoutShift": false,
+    "chartInfo": {
+      "exists": true,
+      "textLabels": [
+        "평균 49만",
+        "최저가 369,434원",
+        "2월",
+        "3월",
+        "4월",
+        "5월",
+        "6월",
+        "7월",
+        "8월"
+      ],
+      "hasAxisLabels": true,
+      "hasAvgLine": true,
+      "hasMinLabel": true,
+      "title": "출발일별 1인당 예상 비용 추이"
+    },
+    "cellClarity": {
+      "contextHeaders": [
+        "3일",
+        "7일",
+        "1인당 최저가",
+        "평균",
+        "출발일별 1인당 예상 비용 추이"
+      ],
+      "sampleCell": "2048만"
+    }
+  },
+  "accessibility": {
+    "issues": [
+      "19 very light gray text elements",
+      "9 buttons without text or aria-label"
+    ],
+    "totalButtons": 20,
+    "unlabeledButtons": 9,
+    "tinyTextElements": 0,
+    "smallTapTargets": 2,
+    "imagesWithoutAlt": 0
+  },
+  "mobile": {
+    "overflow": false,
+    "scrollW": 375,
+    "clientW": 375,
+    "cellSizes": [
+      {
+        "w": 41,
+        "h": 58
+      },
+      {
+        "w": 41,
+        "h": 58
+      },
+      {
+        "w": 41,
+        "h": 58
+      },
+      {
+        "w": 41,
+        "h": 58
+      },
+      {
+        "w": 41,
+        "h": 58
+      }
+    ],
+    "minCellSize": {
+      "w": 41,
+      "h": 58
+    },
+    "shareButton": {
+      "reachable": true,
+      "x": 157.5,
+      "y": 94,
+      "w": 60,
+      "h": 28.5
+    },
+    "overflowCount": 0
+  },
+  "copy": {
+    "findings": [],
+    "hasCurrency": true,
+    "hasAbbreviations": true,
+    "selectsWithoutLabel": 2,
+    "sampleTexts": [
+      "TripSignal",
+      "내 여행의 시세를 확인하세요",
+      "가격 산정 기준",
+      "여정 길이",
+      "4박 5일",
+      "1인당 최저가",
+      "41만",
+      "5/11 (월) 출발",
+      "57만",
+      "161,261원 절약",
+      "출발일별 1인당 예상 비용 추이",
+      "1인당 예상 비용 · 실제 예약가와 다를 수 있음",
+      "2026년 2월",
+      "79만",
+      "85만",
+      "92만",
+      "92만",
+      "81만",
+      "85만",
+      "79만",
+      "73만"
+    ]
+  }
+}

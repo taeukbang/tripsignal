@@ -22,8 +22,10 @@ interface MonthData {
     trip: TripCost | null;
     label: PriceLabel;
     isLowest: boolean;
+    isPast: boolean;
   }>;
   startDayOfWeek: number;
+  dataCount: number;
 }
 
 const DAY_HEADERS = ["일", "월", "화", "수", "목", "금", "토"];
@@ -61,14 +63,17 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
       const startDayOfWeek = new Date(year, month, 1).getDay();
 
       const days: MonthData["days"] = [];
+      let dataCount = 0;
 
       for (let d = 1; d <= daysInMonth; d++) {
         const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
         const trip = costMap.get(dateStr) ?? null;
         const label: PriceLabel = trip ? getLabel(trip.perPersonCost) : "normal";
         const isLowest = trip ? trip.perPersonCost === minCost : false;
+        const isPast = dateStr < todayStr;
 
-        days.push({ date: dateStr, dayOfMonth: d, trip, label, isLowest });
+        if (trip) dataCount++;
+        days.push({ date: dateStr, dayOfMonth: d, trip, label, isLowest, isPast });
       }
 
       monthMap.set(key, {
@@ -77,6 +82,7 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
         label: `${year}년 ${month + 1}월`,
         days,
         startDayOfWeek,
+        dataCount,
       });
 
       current.setMonth(current.getMonth() + 1);
@@ -103,6 +109,7 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
         <button
           onClick={() => setMonthIdx((i) => Math.max(0, i - 1))}
           disabled={safeIdx === 0}
+          aria-label="이전 달"
           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 disabled:opacity-20 transition"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -110,11 +117,19 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
           </svg>
         </button>
 
-        <h3 className="text-base font-bold text-gray-900">{currentMonth.label}</h3>
+        <h3 className="text-base font-bold text-gray-900">
+          {currentMonth.label}
+          {currentMonth.dataCount > 0 && (
+            <span className="text-[10px] font-normal text-gray-400 ml-1.5">
+              {currentMonth.dataCount}일 데이터
+            </span>
+          )}
+        </h3>
 
         <button
           onClick={() => setMonthIdx((i) => Math.min(months.length - 1, i + 1))}
           disabled={safeIdx === months.length - 1}
+          aria-label="다음 달"
           className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 disabled:opacity-20 transition"
         >
           <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
@@ -150,6 +165,7 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
             isLowest={day.isLowest}
             isSelected={selectedDate === day.date}
             isToday={day.date === todayStr}
+            isPast={day.isPast}
             onClick={onSelectDate}
           />
         ))}
@@ -161,6 +177,7 @@ export function PriceCalendar({ costs, selectedDate, onSelectDate }: PriceCalend
           <button
             key={`${m.year}-${m.month}`}
             onClick={() => setMonthIdx(i)}
+            aria-label={`${m.year}년 ${m.month}월로 이동`}
             className={`w-1.5 h-1.5 rounded-full transition-all ${i === safeIdx ? "bg-blue-600 w-4" : "bg-gray-300 hover:bg-gray-400"}`}
           />
         ))}

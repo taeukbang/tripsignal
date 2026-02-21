@@ -194,6 +194,9 @@ export default function HomePage() {
           <p className="text-xs text-gray-400 mt-1.5">
             내 여행의 시세를 확인하세요
           </p>
+          <p className="text-[10px] text-gray-300 mt-1">
+            직항 왕복 + 도심 숙소 합산 · 1인 기준
+          </p>
           {selectedCity && (
             <div className="mt-2 flex justify-center">
               <ShareButton
@@ -349,8 +352,11 @@ export default function HomePage() {
               </span>
             </div>
             {isSparseData && (
-              <div className="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 mb-3">
-                이 도시는 직항 데이터가 일부 날짜만 제공됩니다
+              <div className="text-[11px] text-amber-600 bg-amber-50 rounded-lg px-3 py-2 mb-3 flex items-start gap-1.5">
+                <span className="shrink-0 mt-px">⚠</span>
+                <span>
+                  직항 데이터가 일부 날짜만 제공됩니다. 빈 날짜는 직항이 없거나 아직 수집되지 않은 날짜입니다.
+                </span>
               </div>
             )}
             <PriceCalendar

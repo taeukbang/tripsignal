@@ -39,6 +39,7 @@ export function CitySelector({ continents, cities, selected, onSelect }: CitySel
       <select
         value={continentId}
         onChange={(e) => handleContinentChange(e.target.value)}
+        aria-label="대륙 선택"
         className="flex-1 px-3 py-2.5 rounded-xl text-sm font-medium bg-white border border-gray-200 text-gray-700 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
       >
         <option value="all">전체 대륙</option>
@@ -50,6 +51,7 @@ export function CitySelector({ continents, cities, selected, onSelect }: CitySel
       <select
         value={selected?.id ?? ""}
         onChange={(e) => handleCityChange(e.target.value)}
+        aria-label="도시 선택"
         className="flex-[2] px-3 py-2.5 rounded-xl text-sm font-semibold bg-white border border-gray-200 text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
       >
         {filteredCities.map((c) => (
