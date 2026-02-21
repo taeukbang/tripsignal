@@ -192,7 +192,7 @@ export default function HomePage() {
             </h1>
           </div>
           <p className="text-xs text-gray-400 mt-1.5">
-            출발일별 여행 비용을 한눈에
+            내 여행의 시세를 확인하세요
           </p>
           {selectedCity && (
             <div className="mt-2 flex justify-center">

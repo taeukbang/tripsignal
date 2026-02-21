@@ -1,7 +1,7 @@
 {
   "name": "MyTripSignal",
   "short_name": "TripSignal",
-  "description": "출발일별 총 여행 비용을 한눈에",
+  "description": "내 여행의 시세를 확인하세요",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#F9FAFB",

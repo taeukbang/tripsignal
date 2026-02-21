@@ -13,7 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "MyTripSignal — 출발일별 총 여행 비용을 한눈에",
+  title: "MyTripSignal — 내 여행의 시세를 확인하세요",
   description:
     "향후 3~6개월간 출발일별 총 여행 비용(왕복 항공 + 숙소)을 캘린더 히트맵으로 보여주고, 최적 출발일을 탐색할 수 있는 서비스",
   keywords: [
@@ -31,9 +31,9 @@ export const metadata: Metadata = {
   manifest: "/manifest.json",
   metadataBase: new URL(SITE_URL),
   openGraph: {
-    title: "MyTripSignal — 출발일별 총 여행 비용을 한눈에",
+    title: "MyTripSignal — 내 여행의 시세를 확인하세요",
     description:
-      "3~6개월 캘린더 히트맵으로 최적의 여행 출발일을 찾아보세요. 항공 + 숙소 합산 1인당 비용을 한눈에.",
+      "항공 + 숙소 합산 여행 시세를 캘린더로 확인하고, 가장 저렴한 출발일을 찾아보세요.",
     type: "website",
     url: SITE_URL,
     siteName: "MyTripSignal",
@@ -41,8 +41,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: "MyTripSignal — 출발일별 총 여행 비용을 한눈에",
-    description: "캘린더 히트맵으로 최적의 여행 출발일을 찾아보세요.",
+    title: "MyTripSignal — 내 여행의 시세를 확인하세요",
+    description: "항공 + 숙소 합산 여행 시세를 확인하고, 가장 저렴한 출발일을 찾아보세요.",
   },
   appleWebApp: {
     capable: true,
