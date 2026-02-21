@@ -1,8 +1,8 @@
 # MyTripSignal - PRD
 
 **작성일:** 2026-02-18
-**버전:** 0.6 (PoC)
-**상태:** Implemented
+**버전:** 0.8 (PoC)
+**상태:** Implemented + Instrumented
 **담당:** Growth Department
 
 ---
@@ -397,9 +397,11 @@ MyTripSignal의 숙소 가격은 **3성급 최저가 기준**. "이 날짜에 �
 | 0.4 | 2026-02-18 | 프로덕트 네이밍 확정: "MyTripSignal". 여행 최적 타이밍을 알려주는 시그널이라는 의미 |
 | 0.5 | 2026-02-19 | 가격 분해 뷰에 출처 명시 추가: 항공사명(IATA 코드) + 최저가 호텔명 |
 | 0.6 | 2026-02-19 | 실제 API 스펙 반영 (flight/window, unionstay), 2인 기준 인당 표시, 도심 필터, 가격 추이 그래프 추가, 월 넘기기 캘린더, MRT 블루 톤 적용 |
+| 0.7 | 2026-02-20 | 도시 3개 → 20개 확장 (자동 POI 탐색). 대륙별 필터 UI. MyTripSignal 붙여쓰기 브랜딩. 숙소 4성급 → 3성급 전환 |
+| 0.8 | 2026-02-21 | Phase 3~5 통합 구현. GA4 커스텀 이벤트 12종. 공유(Web Share/클립보드 + URL 상태). 온보딩 3단계. 가격 알림(localStorage). PWA manifest. OG/Twitter 메타태그. 데이터 재수집(항공 12,660건 + 호텔 3,000건). 빈 셀 상태 구분. 차트 200px 확대. 접근성(aria-label, Escape, scroll lock). 초기 로딩 최적화(cities fetch 제거). 태그라인 "내 여행의 시세를 확인하세요". 종합 리팩토링(버그 수정, 데드코드, 보안 헤더, Supabase 싱글턴, 타입 안전성) |
 
 ---
 
-다음 리뷰 예정: Phase 1 데이터 수집 2주 후
+다음 리뷰 예정: Phase 3 사용자 검증 (GA 데이터 기반)
 담당: Growth Department
 승인: Growth Director

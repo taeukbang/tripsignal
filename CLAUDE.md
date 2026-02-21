@@ -123,43 +123,52 @@ TripSignal/
 ├── docs/
 │   └── PRD.md                 # 제품 요구사항 문서
 ├── package.json
-├── next.config.ts
+├── next.config.ts             # 보안 헤더, poweredByHeader 제거
 ├── tsconfig.json
 ├── .github/
 │   └── workflows/
 │       └── collect-prices.yml # 매일 KST 09:00 가격 수집
 ├── public/
+│   ├── favicon.svg
+│   ├── icon-192.svg
+│   └── manifest.json          # PWA 매니페스트
 └── src/
     ├── app/                   # Next.js App Router
-    │   ├── layout.tsx         # 루트 레이아웃
+    │   ├── layout.tsx         # 루트 레이아웃 (GA, OG, PWA 메타)
     │   ├── page.tsx           # 메인 페이지 (CSR, 전체 상태 관리)
     │   ├── globals.css        # 글로벌 스타일 + 셀 클래스
     │   └── api/
     │       ├── cities/route.ts           # GET /api/cities
     │       └── prices/[cityId]/route.ts  # GET /api/prices/:cityId
     ├── components/
-    │   ├── CitySelector.tsx   # 도시 선택 (3개 필 버튼)
+    │   ├── CitySelector.tsx   # 도시 선택 (대륙 필터 + 도시 드롭다운)
     │   ├── DurationSlider.tsx # 3~7일 여정 슬라이더
-    │   ├── PriceTrendChart.tsx # 가격 추이 꺾은선 그래프 (SVG + HTML 레이어)
+    │   ├── PriceTrendChart.tsx # 가격 추이 꺾은선 그래프 (SVG, 200px)
     │   ├── PriceCalendar.tsx  # 월 넘기기 캘린더 히트맵 (핵심)
-    │   ├── PriceBreakdown.tsx # 가격 분해 바텀시트 (항공사명/호텔명 표시)
+    │   ├── PriceBreakdown.tsx # 가격 분해 바텀시트 (Escape, aria-modal, 스크롤 락)
+    │   ├── ShareButton.tsx    # 공유 버튼 (Web Share API / 클립보드)
+    │   ├── Onboarding.tsx     # 첫 방문 3단계 가이드 (localStorage)
+    │   ├── PriceAlert.tsx     # 가격 알림 버튼 + 배너 (localStorage)
     │   └── ui/
-    │       ├── CalendarCell.tsx
-    │       ├── PriceLabel.tsx
-    │       └── HeatmapLegend.tsx
+    │       ├── CalendarCell.tsx  # 개별 날짜 셀 (memo, 과거/빈 셀 구분)
+    │       ├── PriceLabel.tsx    # 가격 라벨 배지 (타입 안전)
+    │       ├── HeatmapLegend.tsx # 색상 범례 (서버 컴포넌트)
+    │       └── Logo.tsx          # Valley Pin 로고 (서버 컴포넌트)
     ├── lib/
-    │   ├── supabase.ts        # Supabase 클라이언트 (Service + Anon)
+    │   ├── supabase.ts        # Supabase 싱글턴 클라이언트 (Service + Anon)
     │   ├── mrt-api.ts         # MRT API 래퍼 (fetchFlightWindow, fetchHotelSearch)
     │   ├── price-calculator.ts # 2인 기준 비용 계산, 인당 비용, 가격 라벨
+    │   ├── analytics.ts       # GA4 커스텀 이벤트 모듈 (12개 이벤트)
+    │   ├── deeplinks.ts       # MRT 항공/숙소 딥링크 URL 빌더
     │   └── utils.ts           # 날짜, 포맷팅, sleep, 항공사명 매핑
     ├── scripts/
-    │   ├── collect-flights.ts      # 항공 수집 (/calendar/window, 5일 여정)
-    │   ├── collect-hotels.ts       # 숙소 수집 (/unionstay, 4박, 도심 필터)
+    │   ├── collect-flights.ts      # 항공 수집 (/calendar/window, period 3~7)
+    │   ├── collect-hotels.ts       # 숙소 수집 (/unionstay, 3일간격, 90일)
     │   ├── collect-all.ts          # 통합 수집
     │   ├── discover-city-ids.ts    # 도시 regionId/downtownPoiId 탐색
     │   └── validate-data.ts        # 수집 데이터 품질 검증
     ├── data/
-    │   └── cities.ts          # 도시 목록 (regionId, downtownPoiId 포함)
+    │   └── cities.ts          # 도시 목록 20개 (정적 import, API 불필요)
     └── types/
         └── index.ts           # TypeScript 타입 정의
 ```
@@ -284,14 +293,17 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 - 로고 컴포넌트: `src/components/ui/Logo.tsx`
 
 ### 화면 구성 (위→아래)
-1. 헤더: Valley Pin 로고 + "MyTripSignal" (블루 액센트)
-2. 도시 선택: 다크 필 버튼 (활성) + 화이트 아웃라인 (비활성)
-3. 여정 슬라이더: 3~7일, 기본 5일
-4. 요약 카드: 1인당 최저가 (블루) + 평균 + 절약액
-5. **가격 추이 꺾은선 그래프**: SVG 라인 + 평균 점선 + 마우스오버 툴팁
-6. **월 넘기기 캘린더**: ← 2026년 3월 → 형태, 하단 월 인디케이터 점
-7. 히트맵 범례: 블루(저렴) → 빨강(비쌈)
-8. 가격 분해 바텀시트: 항공/숙소 출처 + 2인 합계 + 1인당
+1. 헤더: Valley Pin 로고 + "MyTripSignal" + "내 여행의 시세를 확인하세요" + "직항 왕복 + 도심 숙소 합산 · 1인 기준" + 공유 버튼
+2. 가격 알림 배너: 저장한 가격이 하락했을 때 상단에 표시
+3. 가격 산정 기준 토글: 펼치면 상세 기준 설명
+4. 도시 선택: 대륙 필터 드롭다운 + 도시 드롭다운
+5. 여정 슬라이더: 3~7일, 기본 5일
+6. 요약 카드: 1인당 최저가 (블루) + 평균 + 절약액
+7. **가격 추이 꺾은선 그래프**: SVG 200px + 평균 점선 + 최저가 라벨 + 마우스오버 툴팁
+8. **월 넘기기 캘린더**: ← 2026년 3월 (N일 데이터) → 형태, 빈 셀 상태 구분 (과거 vs 직항 없음), 하단 월 인디케이터 점
+9. 히트맵 범례: 블루(저렴) → 빨강(비쌈)
+10. 가격 분해 바텀시트: 항공/숙소 출처 + 2인 합계 + 1인당 + 가격 알림 설정 (Escape 키 닫기, 스크롤 락)
+11. 온보딩 (첫 방문만): 3단계 가이드 모달
 
 ---
 
@@ -386,6 +398,53 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 | 초기화 (핵심가치, 메타규칙) | `C:\Users\MRT-USER\MRT-Growth\init.md` |
 | 브랜드 가이드라인 | `C:\Users\MRT-USER\MRT-Growth\growth-department\BRAND-GUIDELINES.md` |
 | 2026 OKR | `C:\Users\MRT-USER\MRT-Growth\growth-department\2026-OKR.md` |
+
+---
+
+## 개발 이력
+
+### Phase 1~2: PoC 구축 (2026-02-18~19)
+- 초기 PoC: 3개 도시 (파리/도쿄/방콕), Supabase, 캘린더 히트맵, 가격 추이 그래프
+- PRD v0.6 완성, 가격 계산 로직 확립
+
+### Phase 2.5: 도시 확장 (2026-02-20)
+- 3개 → 20개 도시 확장 (자동 POI 탐색 스크립트)
+- 대륙별 필터 + 도시 드롭다운 UI
+- MyTripSignal 브랜딩 통일 (붙여쓰기)
+- 숙소 4성급 → 3성급 전환
+
+### Phase 3: 측정 & 검증 (2026-02-21)
+- Google Analytics (G-41N9YJBT04) 설정 + 12개 커스텀 이벤트
+- OG 메타태그 강화 (og:title, og:description, twitter:card, og:locale)
+- PWA manifest.json 추가
+- "예상가" 면책 안내 보강
+
+### Phase 4: 리텐션 & 바이럴 (2026-02-21)
+- 공유 기능: Web Share API + 클립보드 폴백 + URL 상태 관리 (?city=&duration=&date=)
+- 온보딩: 첫 방문 3단계 가이드 (localStorage 기반, 건너뛰기 가능)
+- 가격 알림: 바텀시트에서 설정 → 재방문 시 가격 하락 감지 배너
+
+### Phase 5: 데이터 밀도 & UX (2026-02-21)
+- 데이터 수집 재실행: 항공 12,660건 + 호텔 3,000건 (도쿄 181일, 뉴욕 72일)
+- 빈 셀 상태 구분: 과거 날짜 vs 미래 빈 날짜("—" 표시)
+- 헤더에 "직항 왕복 + 도심 숙소 합산 · 1인 기준" 상시 노출
+- 차트 높이 160px → 200px, 라벨 겹침 방지
+- 접근성: 11개 aria-label 추가 (캘린더 버튼, 셀렉트, 차트)
+
+### Phase 5.5: 성능 최적화 (2026-02-21)
+- `/api/cities` fetch 제거 → `CITIES` 정적 import (RTT 1 제거)
+- `selectedCity` 즉시 초기화로 가격 fetch가 마운트 즉시 시작
+- 브랜딩 "MyTripSignal" 전체 통일 + 태그라인 "내 여행의 시세를 확인하세요"
+
+### Phase 5.5: 코드 리팩토링 (2026-02-21)
+- **버그 수정**: `createPriceLabeler` 음수 퍼센타일 → 최고가가 "최저가"로 표시되던 버그
+- **버그 수정**: `getPriceStats`의 `Math.min(...spread)` → 단일 루프로 변경 (스택 오버플로 방지)
+- **데드 코드 제거**: `ApiResponse<T>` 타입, `getCitiesByContinent()`, CSS 변수 3개
+- **접근성**: PriceBreakdown에 Escape 키 닫기, `aria-modal`, `role="dialog"`, 스크롤 락 추가
+- **성능**: Supabase 싱글턴 클라이언트, `selectedTrip`/`selectedLabel` useMemo, ShareButton timer cleanup
+- **보안**: `next.config.ts`에 X-Content-Type-Options, X-Frame-Options, Referrer-Policy 헤더, `poweredByHeader: false`
+- **타입 안전성**: `PriceLabel` Record 타입 강화, Logo/HeatmapLegend 서버 컴포넌트화
+- **Analytics**: `breakdownView`/`chartInteract` 데드 코드 활성화
 
 ---
 
