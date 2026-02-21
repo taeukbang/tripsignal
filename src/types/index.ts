@@ -36,13 +36,6 @@ export const ADULTS_COUNT = 2;
 /** 가격 라벨 */
 export type PriceLabel = "lowest" | "cheap" | "normal" | "expensive" | "peak";
 
-/** API 응답 공통 형식 */
-export interface ApiResponse<T> {
-  data: T;
-  error: string | null;
-  meta: Record<string, unknown>;
-}
-
 /** 항공 가격 엔트리 (API 응답용) */
 export interface FlightPriceEntry {
   price: number;
@@ -79,7 +72,7 @@ export const DEFAULT_DURATION: Duration = 5;
 export const MIN_DURATION = 3;
 export const MAX_DURATION = 7;
 
-/** MRT 항공 캘린더 API 응답 내 개별 항목 */
+/** MRT 항공 캘린더 API 응답 내 개별 항목 (수집 스크립트용) */
 export interface MrtFlightCalendarItem {
   departureDate: string;
   price: number;
@@ -87,7 +80,7 @@ export interface MrtFlightCalendarItem {
   airlineName: string;
 }
 
-/** MRT 숙소 맵 API 응답 내 호텔 항목 */
+/** MRT 숙소 맵 API 응답 내 호텔 항목 (수집 스크립트용) */
 export interface MrtHotelItem {
   id: number;
   name: string;

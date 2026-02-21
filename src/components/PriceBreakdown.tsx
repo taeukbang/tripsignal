@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useCallback } from "react";
 import type { City, TripCost, PriceLabel as PriceLabelType } from "@/types";
 import { ADULTS_COUNT } from "@/types";
 import { formatPriceWon, getDayOfWeek } from "@/lib/utils";
@@ -32,8 +33,34 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
     analytics.deeplinkClick(type, city.id, trip.departureDate);
   };
 
+  useEffect(() => {
+    analytics.breakdownView(trip.departureDate, city.id);
+  }, [trip.departureDate, city.id]);
+
+  const handleKeyDown = useCallback(
+    (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    },
+    [onClose],
+  );
+
+  useEffect(() => {
+    document.addEventListener("keydown", handleKeyDown);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handleKeyDown);
+      document.body.style.overflow = "";
+    };
+  }, [handleKeyDown]);
+
   return (
-    <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 flex items-end justify-center"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${month}월 ${day}일 출발 가격 상세`}
+      onClick={onClose}
+    >
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
       <div
         className="relative w-full max-w-lg bg-white rounded-t-3xl p-6 shadow-2xl animate-slide-up"

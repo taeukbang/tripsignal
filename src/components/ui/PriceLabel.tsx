@@ -1,15 +1,14 @@
-"use client";
-
-import type { PriceLabel as PriceLabelType } from "@/types";
+import type { PriceLabel } from "@/types";
 import { getPriceLabelText } from "@/lib/price-calculator";
 
 interface PriceLabelProps {
-  label: PriceLabelType;
+  label: PriceLabel;
 }
 
-const LABEL_STYLES: Record<string, { bg: string; text: string }> = {
+const LABEL_STYLES: Record<PriceLabel, { bg: string; text: string }> = {
   lowest: { bg: "#DBEAFE", text: "#1E40AF" },
   cheap: { bg: "#DCFCE7", text: "#166534" },
+  normal: { bg: "#F3F4F6", text: "#374151" },
   expensive: { bg: "#FFEDD5", text: "#9A3412" },
   peak: { bg: "#FEE2E2", text: "#991B1B" },
 };
@@ -18,7 +17,7 @@ export function PriceLabelBadge({ label }: PriceLabelProps) {
   const text = getPriceLabelText(label);
   if (!text) return null;
 
-  const style = LABEL_STYLES[label] ?? { bg: "#F3F4F6", text: "#374151" };
+  const style = LABEL_STYLES[label];
 
   return (
     <span

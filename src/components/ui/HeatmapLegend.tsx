@@ -1,5 +1,3 @@
-"use client";
-
 export function HeatmapLegend() {
   return (
     <div className="flex items-center gap-2 justify-center mt-4 mb-1">

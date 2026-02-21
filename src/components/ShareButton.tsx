@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import type { City, Duration } from "@/types";
 import { analytics } from "@/lib/analytics";
 
@@ -12,34 +12,40 @@ interface ShareButtonProps {
 
 export function ShareButton({ city, duration, selectedDate }: ShareButtonProps) {
   const [copied, setCopied] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout>>(undefined);
 
-  const buildShareUrl = () => {
+  useEffect(() => () => clearTimeout(timerRef.current), []);
+
+  const shareUrl = useMemo(() => {
+    if (typeof window === "undefined") return "";
     const url = new URL(window.location.origin);
     url.searchParams.set("city", city.id);
     url.searchParams.set("duration", String(duration));
     if (selectedDate) url.searchParams.set("date", selectedDate);
     return url.toString();
-  };
+  }, [city.id, duration, selectedDate]);
 
   const shareText = selectedDate
     ? `${city.nameKo} ${duration}일 여행 최저가를 확인해보세요!`
     : `${city.nameKo} 여행 비용을 한눈에 확인해보세요!`;
 
   const handleShare = async () => {
-    const url = buildShareUrl();
-
     if (navigator.share) {
       try {
-        await navigator.share({ title: "MyTripSignal", text: shareText, url });
+        await navigator.share({ title: "MyTripSignal", text: shareText, url: shareUrl });
         analytics.shareClick("native_share", city.id);
       } catch {
         /* user cancelled */
       }
     } else {
-      await navigator.clipboard.writeText(url);
-      analytics.shareClick("clipboard", city.id);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        analytics.shareClick("clipboard", city.id);
+        setCopied(true);
+        timerRef.current = setTimeout(() => setCopied(false), 2000);
+      } catch {
+        /* clipboard unavailable */
+      }
     }
   };
 
@@ -55,6 +61,7 @@ export function ShareButton({ city, duration, selectedDate }: ShareButtonProps) 
         viewBox="0 0 24 24"
         stroke="currentColor"
         strokeWidth={2}
+        aria-hidden="true"
       >
         <path
           strokeLinecap="round"

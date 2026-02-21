@@ -218,7 +218,3 @@ export function getCityById(cityId: string): City | undefined {
   return CITIES.find((c) => c.id === cityId);
 }
 
-export function getCitiesByContinent(continentId: string): City[] {
-  if (continentId === "all") return CITIES;
-  return CITIES.filter((c) => c.continentId === continentId);
-}

@@ -50,7 +50,7 @@ export function calculateTripCosts(
   }
 
   return costs.sort(
-    (a, b) => new Date(a.departureDate).getTime() - new Date(b.departureDate).getTime(),
+    (a, b) => a.departureDate.localeCompare(b.departureDate),
   );
 }
 
@@ -63,13 +63,12 @@ function findNearestHotelPrice(
     return hotels[targetDate][durationKey];
   }
 
-  const targetTime = new Date(targetDate).getTime();
   let nearest: HotelPriceEntry | null = null;
   let minDiff = Infinity;
 
   for (const [date, durations] of Object.entries(hotels)) {
     if (!durations[durationKey]) continue;
-    const diff = Math.abs(new Date(date).getTime() - targetTime);
+    const diff = Math.abs(Date.parse(date) - Date.parse(targetDate));
     if (diff < minDiff) {
       minDiff = diff;
       nearest = durations[durationKey];
@@ -85,7 +84,8 @@ export function createPriceLabeler(allPrices: number[]): (price: number) => Pric
   const len = sorted.length;
 
   return (price: number) => {
-    const idx = sorted.findIndex((p) => p >= price);
+    let idx = sorted.findIndex((p) => p >= price);
+    if (idx === -1) idx = len;
     const percentile = idx / len;
     if (percentile <= PERCENTILE_LOWEST) return "lowest";
     if (percentile <= PERCENTILE_CHEAP) return "cheap";
@@ -115,11 +115,26 @@ export function getPriceStats(costs: TripCost[]): PriceStats {
     return { minCost: 0, maxCost: 0, avgCost: 0, minDate: "", count: 0 };
   }
 
-  const prices = costs.map((c) => c.perPersonCost);
-  const minCost = Math.min(...prices);
-  const maxCost = Math.max(...prices);
-  const avgCost = Math.round(prices.reduce((a, b) => a + b, 0) / prices.length);
-  const minDate = costs.find((c) => c.perPersonCost === minCost)?.departureDate ?? "";
+  let minCost = Infinity;
+  let maxCost = -Infinity;
+  let sum = 0;
+  let minDate = "";
 
-  return { minCost, maxCost, avgCost, minDate, count: costs.length };
+  for (const c of costs) {
+    const p = c.perPersonCost;
+    sum += p;
+    if (p < minCost) {
+      minCost = p;
+      minDate = c.departureDate;
+    }
+    if (p > maxCost) maxCost = p;
+  }
+
+  return {
+    minCost,
+    maxCost,
+    avgCost: Math.round(sum / costs.length),
+    minDate,
+    count: costs.length,
+  };
 }

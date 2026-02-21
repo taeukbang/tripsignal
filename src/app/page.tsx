@@ -112,13 +112,15 @@ export default function HomePage() {
     return map;
   }, [tripCosts, selectedCity]);
 
-  const selectedTrip = selectedDate
-    ? tripCosts.find((c) => c.departureDate === selectedDate) ?? null
-    : null;
+  const selectedTrip = useMemo(
+    () => (selectedDate ? tripCosts.find((c) => c.departureDate === selectedDate) ?? null : null),
+    [selectedDate, tripCosts],
+  );
 
-  const selectedLabel = selectedTrip
-    ? priceLabeler(selectedTrip.perPersonCost)
-    : "normal";
+  const selectedLabel = useMemo(
+    () => (selectedTrip ? priceLabeler(selectedTrip.perPersonCost) : "normal" as const),
+    [selectedTrip, priceLabeler],
+  );
 
   const handleSelectCity = useCallback((city: City) => {
     setSelectedCity(city);

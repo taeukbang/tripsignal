@@ -1,31 +1,23 @@
-import { createClient } from "@supabase/supabase-js";
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-export function createServiceClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
-
-  if (!url || !key) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY",
-    );
-  }
-
-  return createClient(url, key, {
-    auth: { persistSession: false },
-  });
+function createCachedClient(urlKey: string, keyName: string): () => SupabaseClient {
+  let instance: SupabaseClient | null = null;
+  return () => {
+    if (instance) return instance;
+    const url = process.env[urlKey];
+    const key = process.env[keyName];
+    if (!url || !key) throw new Error(`Missing ${urlKey} or ${keyName}`);
+    instance = createClient(url, key, { auth: { persistSession: false } });
+    return instance;
+  };
 }
 
-export function createAnonClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+export const createServiceClient = createCachedClient(
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+);
 
-  if (!url || !key) {
-    throw new Error(
-      "Missing NEXT_PUBLIC_SUPABASE_URL or NEXT_PUBLIC_SUPABASE_ANON_KEY",
-    );
-  }
-
-  return createClient(url, key, {
-    auth: { persistSession: false },
-  });
-}
+export const createAnonClient = createCachedClient(
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+);

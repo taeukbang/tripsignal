@@ -34,8 +34,8 @@ export const analytics = {
       departure_date: date,
     }),
 
-  chartInteract: (date: string) =>
-    sendEvent("chart_interact", { departure_date: date }),
+  chartInteract: (date: string, price: number) =>
+    sendEvent("chart_interact", { departure_date: date, per_person_cost: price }),
 
   shareClick: (method: string, cityId: string) =>
     sendEvent("share_click", { method, city_id: cityId }),

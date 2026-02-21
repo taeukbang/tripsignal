@@ -21,16 +21,13 @@
 :root {
   --mrt-blue: #2563EB;
   --mrt-blue-light: #DBEAFE;
-  --mrt-green: #16A34A;
 
   --price-lowest: #2563EB;
   --price-cheap: #93C5FD;
   --price-normal: #E5E7EB;
   --price-expensive: #FED7AA;
   --price-peak: #FECACA;
-  --price-nodata: #F9FAFB;
 
-  --background: #FFFFFF;
   --foreground: #111827;
 }
 
@@ -60,7 +57,7 @@ body {
 }
 
 .cell-lowest {
-  background: #DBEAFE;
+  background: var(--mrt-blue-light);
   box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.15);
 }
 
