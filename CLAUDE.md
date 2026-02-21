@@ -389,6 +389,17 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 
 ---
 
+## Git 운영
+
+| 항목 | 값 |
+|------|-----|
+| Remote | `https://github.com/taeukbang/tripsignal.git` |
+| GitHub 계정 | **taeukbang** — 푸시 시 계정 선택 프롬프트가 나오면 항상 `taeukbang` 선택 |
+| 브랜치 전략 | PR 없이 main 직접 push (PoC 단계) |
+| Worktree | detached HEAD 상태일 수 있음 → `git push origin HEAD:main` 사용 |
+
+---
+
 ## 관련 프로젝트
 
 | 프로젝트 | 경로 | 관계 |
