@@ -17,10 +17,10 @@ import {
 } from "@/lib/price-calculator";
 import { formatPrice, formatPriceWon, formatShortDate } from "@/lib/utils";
 import { analytics } from "@/lib/analytics";
-import type { City, Continent, PriceData, Duration } from "@/types";
+import type { City, PriceData, Duration } from "@/types";
 import { DEFAULT_DURATION, DURATIONS } from "@/types";
 import { Logo } from "@/components/ui/Logo";
-import { CONTINENTS } from "@/data/cities";
+import { CITIES, CONTINENTS } from "@/data/cities";
 
 function readUrlParams(): { city?: string; duration?: Duration; date?: string } {
   if (typeof window === "undefined") return {};
@@ -47,44 +47,23 @@ function updateUrlParams(city: string, duration: Duration, date?: string | null)
   window.history.replaceState(null, "", url.toString());
 }
 
+function resolveInitialState() {
+  const url = readUrlParams();
+  const city = (url.city ? CITIES.find((c) => c.id === url.city) : null) ?? CITIES[0];
+  const dur = url.duration ?? DEFAULT_DURATION;
+  const date = url.date ?? null;
+  return { city, dur, date };
+}
+
 export default function HomePage() {
-  const [cities, setCities] = useState<City[]>([]);
-  const [selectedCity, setSelectedCity] = useState<City | null>(null);
-  const [duration, setDuration] = useState<Duration>(DEFAULT_DURATION);
+  const initRef = useRef(resolveInitialState());
+  const [selectedCity, setSelectedCity] = useState<City>(initRef.current.city);
+  const [duration, setDuration] = useState<Duration>(initRef.current.dur);
   const [priceData, setPriceData] = useState<PriceData | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<string | null>(initRef.current.date);
+  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPricingInfo, setShowPricingInfo] = useState(false);
-
-  const urlParamsRef = useRef(readUrlParams());
-
-  useEffect(() => {
-    fetch("/api/cities")
-      .then((res) => {
-        if (!res.ok) throw new Error(`HTTP ${res.status}`);
-        return res.json();
-      })
-      .then((json) => {
-        const list: City[] = json.data;
-        setCities(list);
-
-        const urlCity = urlParamsRef.current.city;
-        const match = urlCity ? list.find((c) => c.id === urlCity) : null;
-        setSelectedCity(match ?? list[0] ?? null);
-
-        if (urlParamsRef.current.duration) {
-          setDuration(urlParamsRef.current.duration);
-        }
-        if (urlParamsRef.current.date) {
-          setSelectedDate(urlParamsRef.current.date);
-        }
-      })
-      .catch((err) => {
-        console.error(err);
-        setError("도시 목록을 불러오지 못했습니다");
-      });
-  }, []);
 
   useEffect(() => {
     if (!selectedCity) return;
@@ -141,14 +120,11 @@ export default function HomePage() {
     ? priceLabeler(selectedTrip.perPersonCost)
     : "normal";
 
-  const handleSelectCity = useCallback(
-    (city: City) => {
-      setSelectedCity(city);
-      setSelectedDate(null);
-      analytics.cityChange(city.id, city.nameKo);
-    },
-    [],
-  );
+  const handleSelectCity = useCallback((city: City) => {
+    setSelectedCity(city);
+    setSelectedDate(null);
+    analytics.cityChange(city.id, city.nameKo);
+  }, []);
 
   const handleDurationChange = useCallback((d: Duration) => {
     setDuration(d);
@@ -175,8 +151,7 @@ export default function HomePage() {
     });
   }, []);
 
-  const showEmptyState =
-    priceData === null && !loading && !error && cities.length > 0;
+  const showEmptyState = priceData === null && !loading && !error;
   const isSparseData =
     !loading && !error && tripCosts.length > 0 && tripCosts.length < 60;
 
@@ -241,7 +216,7 @@ export default function HomePage() {
         <section className="mb-5">
           <CitySelector
             continents={CONTINENTS}
-            cities={cities}
+            cities={CITIES}
             selected={selectedCity}
             onSelect={handleSelectCity}
           />
