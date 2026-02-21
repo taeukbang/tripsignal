@@ -5,6 +5,8 @@ import { ADULTS_COUNT } from "@/types";
 import { formatPriceWon, getDayOfWeek } from "@/lib/utils";
 import { buildFlightUrl, buildHotelUrl } from "@/lib/deeplinks";
 import { PriceLabelBadge } from "@/components/ui/PriceLabel";
+import { PriceAlertButton } from "@/components/PriceAlert";
+import { analytics } from "@/lib/analytics";
 
 interface PriceBreakdownProps {
   trip: TripCost;
@@ -26,6 +28,10 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
   const flightUrl = buildFlightUrl(city, trip.departureDate, trip.returnDate);
   const hotelUrl = buildHotelUrl(city, trip.departureDate, trip.returnDate);
 
+  const handleDeeplink = (type: "flight" | "hotel") => {
+    analytics.deeplinkClick(type, city.id, trip.departureDate);
+  };
+
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center" onClick={onClose}>
       <div className="absolute inset-0 bg-black/20 backdrop-blur-sm" />
@@ -39,7 +45,10 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
           <h3 className="text-lg font-bold text-gray-900">
             {month}월 {day}일 ({dow}) 출발
           </h3>
-          <PriceLabelBadge label={label} />
+          <div className="flex items-center gap-2">
+            <PriceAlertButton city={city} trip={trip} />
+            <PriceLabelBadge label={label} />
+          </div>
         </div>
         <div className="text-xs text-gray-400 mb-4">
           {nights}박 {trip.duration}일 · 성인 {ADULTS_COUNT}인 · 이코노미 · 1실 · 예상가
@@ -93,6 +102,7 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
             href={flightUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleDeeplink("flight")}
             className="flex-1 py-3 text-center text-sm font-semibold text-blue-600 bg-white rounded-xl ring-1 ring-blue-200 hover:bg-blue-50 transition"
           >
             항공권 보기
@@ -101,6 +111,7 @@ export function PriceBreakdown({ trip, label, city, onClose }: PriceBreakdownPro
             href={hotelUrl}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() => handleDeeplink("hotel")}
             className="flex-1 py-3 text-center text-sm font-semibold text-blue-600 bg-white rounded-xl ring-1 ring-blue-200 hover:bg-blue-50 transition"
           >
             숙소 보기

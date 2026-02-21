@@ -1,0 +1,24 @@
+{
+  "name": "My TripSignal",
+  "short_name": "TripSignal",
+  "description": "출발일별 총 여행 비용을 한눈에",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F9FAFB",
+  "theme_color": "#2563EB",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.svg",
+      "sizes": "192x192",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
