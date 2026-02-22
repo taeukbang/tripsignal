@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react";
 import type { City, Continent } from "@/types";
+import { getCountryFlag } from "@/data/cities";
 
 interface CitySelectorProps {
   continents: Continent[];
@@ -17,6 +18,16 @@ export function CitySelector({ continents, cities, selected, onSelect }: CitySel
     if (continentId === "all") return cities;
     return cities.filter((c) => c.continentId === continentId);
   }, [cities, continentId]);
+
+  const citiesByCountry = useMemo(() => {
+    const map = new Map<string, City[]>();
+    for (const city of filteredCities) {
+      const group = map.get(city.countryKo) ?? [];
+      group.push(city);
+      map.set(city.countryKo, group);
+    }
+    return map;
+  }, [filteredCities]);
 
   const handleContinentChange = (newId: string) => {
     setContinentId(newId);
@@ -54,8 +65,12 @@ export function CitySelector({ continents, cities, selected, onSelect }: CitySel
         aria-label="도시 선택"
         className="flex-[2] px-3 py-2.5 rounded-xl text-sm font-semibold bg-white border border-gray-200 text-gray-900 cursor-pointer focus:outline-none focus:ring-2 focus:ring-blue-200"
       >
-        {filteredCities.map((c) => (
-          <option key={c.id} value={c.id}>{c.nameKo}</option>
+        {Array.from(citiesByCountry).map(([country, countryCities]) => (
+          <optgroup key={country} label={`${getCountryFlag(country)} ${country}`}>
+            {countryCities.map((c) => (
+              <option key={c.id} value={c.id}>{c.nameKo}</option>
+            ))}
+          </optgroup>
         ))}
       </select>
     </div>

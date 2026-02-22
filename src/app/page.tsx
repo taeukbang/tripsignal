@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
+import Link from "next/link";
 import { CitySelector } from "@/components/CitySelector";
 import { DurationSlider } from "@/components/DurationSlider";
 import { PriceTrendChart } from "@/components/PriceTrendChart";
@@ -22,18 +23,6 @@ import { DEFAULT_DURATION, DURATIONS } from "@/types";
 import { Logo } from "@/components/ui/Logo";
 import { CITIES, CONTINENTS } from "@/data/cities";
 
-function readUrlParams(): { city?: string; duration?: Duration; date?: string } {
-  if (typeof window === "undefined") return {};
-  const params = new URLSearchParams(window.location.search);
-  const city = params.get("city") ?? undefined;
-  const date = params.get("date") ?? undefined;
-  const durRaw = Number(params.get("duration"));
-  const duration = DURATIONS.includes(durRaw as Duration)
-    ? (durRaw as Duration)
-    : undefined;
-  return { city, duration, date };
-}
-
 function updateUrlParams(city: string, duration: Duration, date?: string | null) {
   if (typeof window === "undefined") return;
   const url = new URL(window.location.href);
@@ -47,29 +36,39 @@ function updateUrlParams(city: string, duration: Duration, date?: string | null)
   window.history.replaceState(null, "", url.toString());
 }
 
-function resolveInitialState() {
-  const url = readUrlParams();
-  const city = (url.city ? CITIES.find((c) => c.id === url.city) : null) ?? CITIES[0];
-  const dur = url.duration ?? DEFAULT_DURATION;
-  const date = url.date ?? null;
-  return { city, dur, date };
-}
-
 export default function HomePage() {
-  const initRef = useRef(resolveInitialState());
-  const [selectedCity, setSelectedCity] = useState<City>(initRef.current.city);
-  const [duration, setDuration] = useState<Duration>(initRef.current.dur);
+  const [selectedCity, setSelectedCity] = useState<City>(CITIES[0]);
+  const [duration, setDuration] = useState<Duration>(DEFAULT_DURATION);
   const [priceData, setPriceData] = useState<PriceData | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(initRef.current.date);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [showPricingInfo, setShowPricingInfo] = useState(false);
+  const hydrated = useRef(false);
+
+  useEffect(() => {
+    if (hydrated.current) return;
+    hydrated.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const cityParam = params.get("city");
+    const durRaw = Number(params.get("duration"));
+    const dateParam = params.get("date");
+
+    const urlCity = cityParam ? CITIES.find((c) => c.id === cityParam) : null;
+    const urlDur = DURATIONS.includes(durRaw as Duration) ? (durRaw as Duration) : null;
+
+    if (urlCity) setSelectedCity(urlCity);
+    if (urlDur) setDuration(urlDur);
+    if (dateParam) setSelectedDate(dateParam);
+  }, []);
 
   useEffect(() => {
     if (!selectedCity) return;
+    const controller = new AbortController();
+    setPriceData(null);
     setLoading(true);
     setError(null);
-    fetch(`/api/prices/${selectedCity.id}`)
+    fetch(`/api/prices/${selectedCity.id}`, { signal: controller.signal })
       .then((res) => {
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         return res.json();
@@ -79,10 +78,12 @@ export default function HomePage() {
         setLoading(false);
       })
       .catch((err) => {
+        if (err instanceof DOMException && err.name === "AbortError") return;
         console.error(err);
         setError("가격 데이터를 불러오지 못했습니다");
         setLoading(false);
       });
+    return () => controller.abort();
   }, [selectedCity]);
 
   useEffect(() => {
@@ -258,6 +259,13 @@ export default function HomePage() {
                 )}
               </div>
             </div>
+            <Link
+              href={`/compare?duration=${duration}`}
+              className="mt-3 flex items-center justify-center gap-1.5 w-full py-2 rounded-xl bg-blue-50 hover:bg-blue-100 transition text-blue-600 text-xs font-semibold"
+            >
+              <span>다른 도시와 비교해보기</span>
+              <span className="text-[10px]">→</span>
+            </Link>
           </section>
         )}
 

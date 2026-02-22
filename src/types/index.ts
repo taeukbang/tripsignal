@@ -9,11 +9,24 @@ export interface City {
   id: string;
   nameKo: string;
   nameEn: string;
+  countryKo: string;
   airportCode: string;
   airportNameKo: string;
   regionId: number;
   downtownPoiId: string;
   continentId: string;
+}
+
+/** 도시 간 비교 API 응답 */
+export interface CityCostSummary {
+  cityId: string;
+  nameKo: string;
+  countryKo: string;
+  continentId: string;
+  minPerPersonCost: number;
+  avgPerPersonCost: number;
+  cheapestDate: string;
+  dataPoints: number;
 }
 
 /** 총 여행 비용 (클라이언트 계산 결과) — 성인 2인 기준 */
