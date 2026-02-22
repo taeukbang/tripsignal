@@ -1,13 +1,13 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { DurationSlider } from "@/components/DurationSlider";
 import { CityComparisonChart } from "@/components/CityComparisonChart";
 import { Logo } from "@/components/ui/Logo";
 import { formatPrice } from "@/lib/utils";
 import type { CityCostSummary, Duration } from "@/types";
-import { DEFAULT_DURATION } from "@/types";
+import { DEFAULT_DURATION, DURATIONS } from "@/types";
 
 const CONTINENT_LABELS: Record<string, string> = {
   "east-asia": "동아시아",
@@ -19,6 +19,17 @@ const CONTINENT_LABELS: Record<string, string> = {
 export default function ComparePage() {
   const router = useRouter();
   const [duration, setDuration] = useState<Duration>(DEFAULT_DURATION);
+  const hydrated = useRef(false);
+
+  useEffect(() => {
+    if (hydrated.current) return;
+    hydrated.current = true;
+    const params = new URLSearchParams(window.location.search);
+    const durRaw = Number(params.get("duration"));
+    if (DURATIONS.includes(durRaw as Duration)) {
+      setDuration(durRaw as Duration);
+    }
+  }, []);
   const [summaries, setSummaries] = useState<CityCostSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
