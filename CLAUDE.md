@@ -156,11 +156,15 @@ TripSignal/
     │   ├── layout.tsx         # 루트 레이아웃 (GA, OG, PWA 메타)
     │   ├── page.tsx           # 메인 페이지 (CSR, 전체 상태 관리)
     │   ├── globals.css        # 글로벌 스타일 + 셀 클래스
+    │   ├── compare/
+    │   │   └── page.tsx       # 도시별 비용 비교 페이지 (/compare)
     │   └── api/
     │       ├── cities/route.ts           # GET /api/cities
+    │       ├── compare/route.ts          # GET /api/compare?duration=5 (도시별 가격 요약)
     │       └── prices/[cityId]/route.ts  # GET /api/prices/:cityId
     ├── components/
-    │   ├── CitySelector.tsx   # 도시 선택 (대륙 필터 + 도시 드롭다운)
+    │   ├── CitySelector.tsx   # 도시 선택 (대륙 필터 + 국기 optgroup 도시 드롭다운)
+    │   ├── CityComparisonChart.tsx # 도시별 수평 바 차트 (비교 페이지)
     │   ├── DurationSlider.tsx # 3~7일 여정 슬라이더
     │   ├── PriceTrendChart.tsx # 가격 추이 꺾은선 그래프 (SVG, 200px)
     │   ├── PriceCalendar.tsx  # 월 넘기기 캘린더 히트맵 (핵심)
@@ -185,9 +189,12 @@ TripSignal/
     │   ├── collect-hotels.ts       # 숙소 수집 (/unionstay, 3일간격, 90일)
     │   ├── collect-all.ts          # 통합 수집
     │   ├── discover-city-ids.ts    # 도시 regionId/downtownPoiId 탐색
+    │   ├── verify-new-cities.ts    # 신규 도시 직항+숙소 커버리지 검증
+    │   ├── validate-integrity.ts   # 전체 도시 데이터 정합성 검증 (POI/가격/매핑)
+    │   ├── check-hotel-names.ts    # 도시별 호텔명 DB 확인
     │   └── validate-data.ts        # 수집 데이터 품질 검증
     ├── data/
-    │   └── cities.ts          # 도시 목록 20개 (정적 import, API 불필요)
+    │   └── cities.ts          # 도시 목록 39개 + 국기 매핑 (정적 import)
     └── types/
         └── index.ts           # TypeScript 타입 정의
 ```
@@ -211,9 +218,11 @@ npx tsx src/scripts/collect-hotels.ts    # 숙소 가격 수집 (3개 도시 x 3
 npx tsx src/scripts/collect-all.ts       # 전체 수집
 ```
 
-**수집 커버리지:** 20개 도시 × 5 여정(3~7일) × 전체 기간. 도시별 커버리지는 `npx tsx src/scripts/validate-data.ts`로 확인.
+**수집 커버리지:** 39개 도시 × 5 여정(3~7일) × 전체 기간. 도시별 커버리지는 `npx tsx src/scripts/validate-data.ts`로 확인.
 
-**예상 수집 시간:** 항공 ~2분 (100회) + 숙소 ~13분 (600회) = 약 15분
+**예상 수집 시간:** 항공 ~2분 (195회) + 숙소 ~43분 (1170회) = 약 45분
+
+**데이터 정합성 검증:** `npx tsx src/scripts/validate-integrity.ts` — 전체 도시의 항공/숙소/POI/국가/대륙/비용 합리성 8개 항목 자동 검증
 
 ---
 
@@ -311,18 +320,25 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 - 앱 아이콘: `public/icon-192.svg` (192x192)
 - 로고 컴포넌트: `src/components/ui/Logo.tsx`
 
-### 화면 구성 (위→아래)
+### 메인 페이지 구성 (위→아래)
 1. 헤더: Valley Pin 로고 + "MyTripSignal" + "내 여행의 시세를 확인하세요" + "직항 왕복 + 도심 숙소 합산 · 1인 기준" + 공유 버튼
 2. 가격 알림 배너: 저장한 가격이 하락했을 때 상단에 표시
 3. 가격 산정 기준 토글: 펼치면 상세 기준 설명
-4. 도시 선택: 대륙 필터 드롭다운 + 도시 드롭다운
+4. 도시 선택: 대륙 필터 드롭다운 + 국기 optgroup 도시 드롭다운
 5. 여정 슬라이더: 3~7일, 기본 5일
-6. 요약 카드: 1인당 최저가 (블루) + 평균 + 절약액
+6. 요약 카드: 1인당 최저가 (블루) + 평균 + 절약액 + **"다른 도시와 비교해보기" CTA** (블루 배경)
 7. **가격 추이 꺾은선 그래프**: SVG 200px + 평균 점선 + 최저가 라벨 + 마우스오버 툴팁
 8. **월 넘기기 캘린더**: ← 2026년 3월 (N일 데이터) → 형태, 빈 셀 상태 구분 (과거 vs 직항 없음), 하단 월 인디케이터 점
 9. 히트맵 범례: 블루(저렴) → 빨강(비쌈)
 10. 가격 분해 바텀시트: 항공/숙소 출처 + 2인 합계 + 1인당 + 가격 알림 설정 (Escape 키 닫기, 스크롤 락)
 11. 온보딩 (첫 방문만): 3단계 가이드 모달
+
+### 비교 페이지 구성 (/compare)
+1. 헤더: 로고 + "도시별 비용 비교" + "← 돌아가기" 버튼
+2. 여정 슬라이더: DurationSlider 재사용
+3. 대륙 필터: 수평 스크롤 pill 버튼 (전체/동남아/동아시아/미주/유럽, 축약 레이블)
+4. 요약 카드: 가장 저렴한 도시 vs 가장 비싼 도시 + 최대 차이
+5. 수평 바 차트: 도시명(국가) + 가격 + 최저가 출발일. 대륙별 색상 (블루/그린/퍼플/오렌지). 클릭 시 메인 페이지로 이동
 
 ---
 
@@ -369,13 +385,14 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 
 | 항목 | 범위 |
 |------|------|
-| 도시 | 20개 도시 (동아시아 6 + 동남아 8 + 유럽 3 + 미주 3) |
+| 도시 | 39개 도시 (동아시아 11 + 동남아 13 + 유럽 9 + 미주 6) |
 | 기간 | 향후 3~6개월 |
 | 여정 | 3~7일 (슬라이더) |
 | 항공 | 직항 왕복 최저가 (1인가) |
 | 숙소 | 도심 3성급 호텔 최저가 (세금포함 1박가) |
 | 표시 | 성인 2인 기준, 1인당 비용 |
 | 데이터 수집 | GitHub Actions 매일 KST 09:00 |
+| 도시 비교 | /compare 페이지, 전체 도시 1인당 최저가 랭킹 |
 
 ---
 
@@ -454,6 +471,26 @@ SUPABASE_SERVICE_ROLE_KEY=       # Supabase 서비스 키 (수집 스크립트�
 - `/api/cities` fetch 제거 → `CITIES` 정적 import (RTT 1 제거)
 - `selectedCity` 즉시 초기화로 가격 fetch가 마운트 즉시 시작
 - 브랜딩 "MyTripSignal" 전체 통일 + 태그라인 "내 여행의 시세를 확인하세요"
+
+### Phase 6: 도시 확장 & 비교 기능 (2026-02-22)
+- **도시 확장**: 20개 → 39개 (2차례 Wave)
+  - Wave 1 (9개): 오키나와, 나고야, 상하이, 베이징, 쿠알라룸푸르, 마닐라, 프랑크푸르트, LA, 시드니
+  - Wave 2 (10개): 푸꾸옥, 치앙마이, 코타키나발루, SF, 마카오, 암스테르담, 바르셀로나, 뮌헨, 밀라노, 이스탄불
+  - 모든 도시 MRT API 직항+숙소 커버리지 사전 검증 (`verify-new-cities.ts`)
+- **도시 비교 페이지** (`/compare`): 전체 도시 1인당 최저가 수평 바 차트 + 대륙 필터 + 요약 카드
+  - `/api/compare?duration=5` 서버 집계 엔드포인트
+  - `CityComparisonChart` SVG 바 차트 컴포넌트 (대륙별 색상 구분)
+- **도시 선택 UX 개선**:
+  - City 타입에 `countryKo` 필드 추가
+  - `<optgroup>` 국가별 그룹핑 + 국기 이모지 (16개국)
+  - 요약 카드 하단에 "다른 도시와 비교해보기" CTA 통합 (B안)
+- **버그 수정**:
+  - SSR hydration mismatch: URL 파라미터 읽기를 `useEffect`로 이동
+  - fetch race condition: `AbortController` + `priceData` 즉시 초기화 (도쿄 데이터가 싱가포르에 표시되던 버그)
+  - compare API 미사용 import/변수 제거
+  - 비교 페이지 fetch에도 `AbortController` 추가
+- **데이터 정합성 검증**: 39개 도시 × 8개 항목 = 312건 ALL PASS (`validate-integrity.ts`)
+- **항공사 매핑 확장**: 중국/말레이시아/네덜란드/스페인/터키 항공사 추가
 
 ### Phase 5.5: 코드 리팩토링 (2026-02-21)
 - **버그 수정**: `createPriceLabeler` 음수 퍼센타일 → 최고가가 "최저가"로 표시되던 버그
